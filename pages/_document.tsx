@@ -5,9 +5,12 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet" /> 
+          <link
+            href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap"
+            rel="stylesheet"
+          />
         </Head>
-        <body>
+        <body className="bg-zinc-800 text-zinc-300">
           <Main />
           <NextScript />
         </body>
