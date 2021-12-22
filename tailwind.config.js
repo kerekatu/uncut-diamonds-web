@@ -5,7 +5,11 @@ module.exports = {
     fontFamily: {
       sans: ['Source Sans Pro', 'Arial', 'sans-serif'],
     },
-    extend: {},
+    extend: {
+      gridTemplateRows: {
+        layout: '100px 1fr',
+      },
+    },
   },
   plugins: [],
 }

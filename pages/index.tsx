@@ -20,7 +20,6 @@ interface Users {
 
 export default function Home({ users }: Users) {
   const { data: session, status } = useSession()
-  console.log(session)
   return <Layout pageTitle="Strona Główna"></Layout>
 }
 

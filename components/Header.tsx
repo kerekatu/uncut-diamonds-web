@@ -1,37 +1,87 @@
+import { addSpaceEveryCharacter } from '@/libshelpers'
 import { signIn, signOut, useSession } from 'next-auth/react'
+import Image from 'next/image'
+import Link from 'next/link'
+import useSWR from 'swr'
 
 const Header = () => {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
+  const { data: user } = useSWR(`/api/users/${session?.user.id}`)
+
+  if (!user) return <></>
 
   return (
-    <header>
-      {!session ? (
-        <a
-          href="/api/auth/signin"
-          onClick={(e) => {
-            e.preventDefault()
-            signIn('discord')
-          }}
-        >
-          Zaloguj się
-        </a>
-      ) : (
-        <div>
-          <a
-            href="/api/auth/signout"
-            onClick={(e) => {
-              e.preventDefault()
-              signOut()
-            }}
-          >
-            Wyloguj się
-          </a>
-          <div>
-            {session.user.name}
-            <img src={session.user.image} alt="Profile Picture" />
-          </div>
-        </div>
-      )}
+    <header className="flex container mx-auto px-10">
+      <nav className="min-w-full">
+        <ul className="flex items-center gap-6 h-full">
+          <li className="mr-auto">
+            <Link href="/">
+              <a
+                className="block leading-none transition-opacity hover:opacity-50"
+                title="Powrót na stronę główną"
+              >
+                <img
+                  src="/static/logo.svg"
+                  alt="Uncut Diamonds Logo"
+                  className="h-16"
+                />
+              </a>
+            </Link>
+          </li>
+          {!session ? (
+            <li>
+              <a
+                href="/api/auth/signin"
+                className="bg-zinc-900 bg-opacity-20 py-2 px-6 flex items-center rounded-xl h-16 transition-all  hover:bg-opacity-100"
+                onClick={(e) => {
+                  e.preventDefault()
+                  signIn('discord')
+                }}
+              >
+                Zaloguj się
+              </a>
+            </li>
+          ) : (
+            <>
+              <li className="flex items-center gap-2 bg-zinc-900 py-2 px-6 rounded-xl h-16">
+                <div className="flex flex-col justify-center items-end leading-6">
+                  <span>{session.user.name}</span>
+                  <span className="flex items-center gap-1 font-bold">
+                    {addSpaceEveryCharacter(user.data.total)}
+                    <Image
+                      src="/static/diament.png"
+                      alt="Uncut Diamonds Currency Symbol"
+                      width={16}
+                      height={16}
+                      quality={100}
+                    />
+                  </span>
+                </div>
+
+                <Image
+                  src={session.user.image}
+                  alt="Profile Picture"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                />
+              </li>
+              <li>
+                <a
+                  href="/api/auth/signout"
+                  className="bg-zinc-900 bg-opacity-20 py-2 px-6 flex items-center rounded-xl h-16 transition-all  hover:bg-opacity-100"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    signOut()
+                  }}
+                >
+                  Wyloguj się
+                </a>
+              </li>
+            </>
+          )}
+        </ul>
+      </nav>
     </header>
   )
 }
