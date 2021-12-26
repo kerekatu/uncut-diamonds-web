@@ -23,7 +23,7 @@ const Shop = () => {
   const [selectedItem, setSelectedItem] = useState<ISelectedItem | null>(null)
   const { modalOpen, handleToggle, handleCancel } = useModal()
 
-  if (!shop) return <></>
+  if (!user && !shop) return <></>
 
   const isAffordable = (item: ISelectedItem): boolean =>
     item && item!.price <= user?.data.bank
