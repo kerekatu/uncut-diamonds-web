@@ -35,7 +35,10 @@ const Header = () => {
                 className="bg-zinc-900 bg-opacity-20 py-2 px-6 flex items-center rounded-xl h-16 transition-all  hover:bg-opacity-100"
                 onClick={(e) => {
                   e.preventDefault()
-                  signIn()
+                  signIn('discord', {
+                    callbackUrl:
+                      'https://discord-shop-auth-next-git-dev-kerekatu.vercel.app/',
+                  })
                 }}
               >
                 Zaloguj się
