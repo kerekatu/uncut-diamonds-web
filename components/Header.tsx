@@ -47,7 +47,7 @@ const Header = () => {
                 <div className="flex flex-col justify-center items-end leading-6">
                   <span>{session.user.name}</span>
                   <span className="flex items-center gap-1 font-bold">
-                    {addSpaceEveryCharacter(user.data.total)}
+                    {addSpaceEveryCharacter(user.data.bank)}
                     <Image
                       src="/static/diament.png"
                       alt="Uncut Diamonds Currency Symbol"

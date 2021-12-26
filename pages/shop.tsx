@@ -1,62 +1,184 @@
 import Layout from '@/components/Layout'
-import { addSpaceEveryCharacter } from '@/libshelpers'
+import Modal from '@/components/Modal'
+import { useModal } from '@/hooks/useModal'
+import { addSpaceEveryCharacter } from '@/libs/helpers'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast'
 import useSWR from 'swr'
 
-const Shop = () => {
-  const { data: users } = useSWR('/api/users/')
-  const { data: shop } = useSWR('/api/shop')
-  const { data: session } = useSession()
-  const [selectedItem, setSelectedItem] = useState('')
+interface IItem {
+  id: string
+  title: string
+  price: number
+}
 
-  if (!users || !shop) return <></>
+const Shop = () => {
+  const { data: session } = useSession()
+  const { data: shop } = useSWR('/api/shop')
+  const { data: user } = useSWR(`/api/users/${session?.user.id}`)
+  const [selectedItem, setSelectedItem] = useState<IItem | null>(null)
+  const { modalOpen, handleToggle, handleCancel } = useModal()
+
+  if (!shop) return <></>
+
+  const isAffordable = (item: IItem): boolean =>
+    item && item!.price <= user?.data.bank
+
+  const handleAccept = async () => {
+    const purchase = await fetch('/api/shop', {
+      method: 'PATCH',
+      headers: { 'Content-type': 'application/json' },
+      body: JSON.stringify({
+        id: session?.user.id,
+        item: selectedItem?.id,
+        ref: session?.user.ref,
+      }),
+    })
+    const response = await purchase.json()
+
+    if (response.status === '200') {
+      toast.success(`Przedmiot "${selectedItem?.title}" został kupiony`)
+      handleCancel()
+      setSelectedItem(null)
+    } else {
+      toast.error(`Coś poszło nie tak. Spróbuj ponownie`)
+      handleCancel()
+      setSelectedItem(null)
+    }
+  }
 
   return (
-    <Layout pageTitle="Sklep">
-      <section>
-        <ul className="grid grid-cols-4 gap-12">
-          {shop?.data.length > 1 ? (
-            shop.data.map((item) => (
-              <li
-                className={`border-2  bg-zinc-900 rounded-xl px-8 py-4 cursor-pointer ${
-                  selectedItem === item.ref['@ref'].id
-                    ? 'border-green-600'
-                    : 'border-zinc-700 hover:border-green-600 hover:border-opacity-30'
-                }`}
-                key={item.ref['@ref'].id}
-                onClick={() =>
-                  selectedItem === item.ref['@ref'].id
-                    ? setSelectedItem('')
-                    : setSelectedItem(item.ref['@ref'].id)
-                }
-              >
-                <div className="flex flex-col h-full">
-                  <span className="text-2xl font-bold">{item.data.title}</span>
-                  <span className="font-light leading-6">
-                    {item.data.description}
-                  </span>
-                  <span className="flex items-center gap-1 mt-auto self-end">
-                    Cena: {addSpaceEveryCharacter(item.data.price)}
+    <>
+      <Layout pageTitle="Sklep">
+        <section className="flex flex-col gap-6 mb-24">
+          <ul className="grid lg:grid-cols-2 xl:grid-cols-3 gap-12">
+            {shop?.data.length > 1 ? (
+              shop.data
+                .sort((a, b) => a.data.price - b.data.price)
+                .map((item) => (
+                  <li
+                    className={`border-2 bg-zinc-900 rounded-xl px-8 py-4 cursor-pointer border-zinc-700 ${
+                      isAffordable(item.data) &&
+                      (selectedItem?.id === item.ref['@ref'].id
+                        ? '!border-green-600'
+                        : 'hover:border-green-600 hover:border-opacity-30')
+                    } ${
+                      !isAffordable(item.data)
+                        ? 'opacity-20 cursor-default'
+                        : ''
+                    }`}
+                    key={item.ref['@ref'].id}
+                    onClick={() =>
+                      isAffordable(item.data) &&
+                      (selectedItem?.id === item.ref['@ref'].id
+                        ? setSelectedItem(null)
+                        : setSelectedItem({
+                            id: item.ref['@ref'].id,
+                            title: item.data.title,
+                            price: item.data.price,
+                          }))
+                    }
+                  >
+                    <div className="flex flex-col h-full">
+                      <span className="text-2xl font-bold">
+                        {item.data.title}
+                      </span>
+                      <span className="font-light leading-6 mb-auto">
+                        {item.data.description}
+                      </span>
+                      <div className="flex justify-between items-center mt-6 w-full">
+                        <span>
+                          Ilość:{' '}
+                          {item.data.stock === 'Infinite'
+                            ? '∞'
+                            : item.data.stock}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          Cena: {addSpaceEveryCharacter(item.data.price)}
+                          <Image
+                            src="/static/diament.png"
+                            alt="Uncut Diamonds Currency Symbol"
+                            width={16}
+                            height={16}
+                            quality={100}
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  </li>
+                ))
+            ) : (
+              <li>{shop.data[0].title}</li>
+            )}
+          </ul>
+          {!session ? (
+            <div className="fixed bottom-0 right-0 bg-zinc-900 w-full px-10 p-6 flex items-center justify-center text-2xl font-bold gap-2 h-24">
+              Zaloguj się by skorzystać ze sklepu
+            </div>
+          ) : (
+            selectedItem && (
+              <div className="fixed bottom-0 right-0 bg-zinc-900 w-full px-10 p-6 flex items-center justify-between gap-2 transition-all h-24">
+                <div className="flex flex-col">
+                  <span className="flex items-center gap-1">
+                    <strong>Do zapłaty:</strong>{' '}
+                    {addSpaceEveryCharacter(selectedItem!.price)}{' '}
                     <Image
                       src="/static/diament.png"
                       alt="Uncut Diamonds Currency Symbol"
                       width={16}
                       height={16}
                       quality={100}
-                    />
+                    />{' '}
+                    ({user.data.bank - selectedItem!.price})
                   </span>
-                  {/* <span>{item.data.stock}</span> */}
+                  <span className="flex gap-1">
+                    <strong>Wybrane:</strong>
+                    {selectedItem!.title}
+                  </span>
                 </div>
-              </li>
-            ))
-          ) : (
-            <li>{shop.data[0].title}</li>
+                <button
+                  className={`bg-green-600 px-24 py-2 rounded-xl text-white font-bold text-xl transition-all ${
+                    selectedItem
+                      ? 'opacity-100 cursor-pointer hover:bg-green-500'
+                      : 'opacity-50 cursor-not-allowed'
+                  }`}
+                  onClick={handleToggle}
+                >
+                  Kup
+                </button>
+              </div>
+            )
           )}
-        </ul>
-      </section>
-    </Layout>
+        </section>
+        <Toaster />
+      </Layout>
+
+      {modalOpen && selectedItem ? (
+        <Modal
+          acceptButton={{ title: 'Akceptuj', handleAccept }}
+          cancelButton={{ title: 'Anuluj', handleCancel }}
+        >
+          <div className="flex flex-col items-center gap-2 text-center">
+            Kupujesz: {selectedItem.title}
+            <div className="flex text-lg font-normal">
+              <span className="flex items-center gap-1 mr-2">
+                {addSpaceEveryCharacter(selectedItem.price)}
+                <Image
+                  src="/static/diament.png"
+                  alt="Uncut Diamonds Currency Symbol"
+                  width={16}
+                  height={16}
+                  quality={100}
+                />
+              </span>
+              zostanie pobrane z twojego konta!
+            </div>
+          </div>
+        </Modal>
+      ) : null}
+    </>
   )
 }
 

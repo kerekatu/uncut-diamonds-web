@@ -21,6 +21,7 @@ export default NextAuth({
         q.Get(q.Match(q.Index('account_by_id'), token.sub))
       )
 
+      session.user.ref = token.sub
       session.user.image = token.picture
       session.user.id = userDiscordId
         ? userDiscordId.data.providerAccountId

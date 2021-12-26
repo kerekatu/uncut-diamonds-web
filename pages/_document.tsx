@@ -13,6 +13,7 @@ class MyDocument extends Document {
         <body className="bg-zinc-800 text-zinc-300 text-lg">
           <Main />
           <NextScript />
+          <div id="modal"></div>
         </body>
       </Html>
     )
