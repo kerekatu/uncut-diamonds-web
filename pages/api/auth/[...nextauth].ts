@@ -4,6 +4,8 @@ import { faunaClient } from '@/libs/fauna'
 import { FaunaAdapter } from '@next-auth/fauna-adapter'
 import { query as q } from 'faunadb'
 
+// TODO: add types
+
 export default NextAuth({
   adapter: FaunaAdapter(faunaClient),
   providers: [
@@ -17,7 +19,7 @@ export default NextAuth({
   session: { strategy: 'jwt' },
   callbacks: {
     session: async ({ token, session }: any) => {
-      const userDiscordId = await faunaClient.query(
+      const userDiscordId: any = await faunaClient.query(
         q.Get(q.Match(q.Index('account_by_id'), token.sub))
       )
 

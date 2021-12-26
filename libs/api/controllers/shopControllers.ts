@@ -1,9 +1,11 @@
 import { faunaClient } from '@/libs/fauna'
 import { query as q } from 'faunadb'
 
+// TODO: add types
+
 export const getShopItems = async () => {
   try {
-    const response = await faunaClient.query(
+    const response: any = await faunaClient.query(
       q.Map(
         q.Paginate(q.Documents(q.Collection('shop'))),
         q.Lambda('ref', q.Get(q.Var('ref')))
@@ -22,7 +24,7 @@ export const getShopItems = async () => {
 
 export const getShopItemByRef = async (ref: string) => {
   try {
-    const response = await faunaClient.query(
+    const response: any = await faunaClient.query(
       q.Get(q.Ref(q.Collection('shop'), ref))
     )
 

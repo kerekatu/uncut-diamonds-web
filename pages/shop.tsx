@@ -8,7 +8,9 @@ import { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import useSWR from 'swr'
 
-interface IItem {
+// TODO: add types
+
+interface ISelectedItem {
   id: string
   title: string
   price: number
@@ -18,12 +20,12 @@ const Shop = () => {
   const { data: session } = useSession()
   const { data: shop } = useSWR('/api/shop')
   const { data: user } = useSWR(`/api/users/${session?.user.id}`)
-  const [selectedItem, setSelectedItem] = useState<IItem | null>(null)
+  const [selectedItem, setSelectedItem] = useState<ISelectedItem | null>(null)
   const { modalOpen, handleToggle, handleCancel } = useModal()
 
   if (!shop) return <></>
 
-  const isAffordable = (item: IItem): boolean =>
+  const isAffordable = (item: ISelectedItem): boolean =>
     item && item!.price <= user?.data.bank
 
   const handleAccept = async () => {
@@ -56,8 +58,8 @@ const Shop = () => {
           <ul className="grid lg:grid-cols-2 xl:grid-cols-3 gap-12">
             {shop?.data.length > 1 ? (
               shop.data
-                .sort((a, b) => a.data.price - b.data.price)
-                .map((item) => (
+                .sort((a: any, b: any) => a.data.price - b.data.price)
+                .map((item: any) => (
                   <li
                     className={`border-2 bg-zinc-900 rounded-xl px-8 py-4 cursor-pointer border-zinc-700 ${
                       isAffordable(item.data) &&
