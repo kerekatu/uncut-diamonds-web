@@ -1,5 +1,4 @@
 import Layout from '@/components/Layout'
-import Modal from '@/components/Modal'
 import { useModal } from '@/hooks/useModal'
 import { addSpaceEveryCharacter } from '@/libs/helpers'
 import { useSession } from 'next-auth/react'
@@ -7,6 +6,9 @@ import Image from 'next/image'
 import { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import useSWR from 'swr'
+import dynamic from 'next/dynamic'
+
+const Modal = dynamic(() => import('@/components/Modal'))
 
 // TODO: add types
 
@@ -68,7 +70,7 @@ const Shop = () => {
                         : 'hover:border-green-600 hover:border-opacity-30')
                     } ${
                       !isAffordable(item.data)
-                        ? 'opacity-20 cursor-default'
+                        ? 'opacity-50 cursor-default'
                         : ''
                     }`}
                     key={item.ref['@ref'].id}
@@ -112,7 +114,7 @@ const Shop = () => {
                   </li>
                 ))
             ) : (
-              <li>{shop.data[0].title}</li>
+              <li>{shop?.data[0].title}</li>
             )}
           </ul>
           {!session ? (

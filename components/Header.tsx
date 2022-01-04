@@ -2,19 +2,21 @@ import { addSpaceEveryCharacter } from '@/libshelpers'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
 import useSWR from 'swr'
 
 const Header = () => {
   const { data: session } = useSession()
   const { data: user } = useSWR(`/api/users/${session?.user.id}`)
+  const [showNav, setShowNav] = useState(false)
 
   if (!user) return <></>
 
   return (
     <header className="flex container mx-auto px-10">
       <nav className="min-w-full">
-        <ul className="flex items-center gap-6 h-full">
-          <li className="mr-auto">
+        <ul className="items-center flex gap-6 h-full">
+          <li className="mr-auto self-center">
             <Link href="/">
               <a
                 className="block leading-none transition-opacity hover:opacity-50"
@@ -47,7 +49,9 @@ const Header = () => {
                 <div className="flex flex-col justify-center items-end leading-6">
                   <span>{session.user.name}</span>
                   <span className="flex items-center gap-1 font-bold">
-                    {addSpaceEveryCharacter(user.data.bank)}
+                    {user.data.bank > 0
+                      ? addSpaceEveryCharacter(user.data.bank)
+                      : 0}
                     <Image
                       src="/static/diament.png"
                       alt="Uncut Diamonds Currency Symbol"
@@ -66,7 +70,7 @@ const Header = () => {
                   className="rounded-full"
                 />
               </li>
-              <li>
+              <li className="md:block hidden">
                 <a
                   href="/api/auth/signout"
                   className="bg-zinc-900 bg-opacity-20 py-2 px-6 flex items-center rounded-xl h-16 transition-all  hover:bg-opacity-100"

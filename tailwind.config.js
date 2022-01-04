@@ -9,6 +9,31 @@ module.exports = {
       gridTemplateRows: {
         layout: '100px 1fr',
       },
+      animation: {
+        tilt: 'tilt 10s infinite linear',
+        zoom: 'zoom 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+      },
+      keyframes: {
+        tilt: {
+          '0%, 50%, 100%': {
+            transform: 'rotate(0deg)',
+          },
+          '25%': {
+            transform: 'rotate(1deg)',
+          },
+          '75%': {
+            transform: 'rotate(-1deg)',
+          },
+          zoom: {
+            '50%': {
+              transform: 'scale(1.25)',
+            },
+            '100%': {
+              transform: 'scale(1)',
+            },
+          },
+        },
+      },
     },
   },
   plugins: [],
