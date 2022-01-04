@@ -24,13 +24,13 @@ module.exports = {
           '75%': {
             transform: 'rotate(-1deg)',
           },
-          zoom: {
-            '50%': {
-              transform: 'scale(1.25)',
-            },
-            '100%': {
-              transform: 'scale(1)',
-            },
+        },
+        zoom: {
+          '50%': {
+            transform: 'scale(1.25)',
+          },
+          '100%': {
+            transform: 'scale(1)',
           },
         },
       },
