@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="md:flex-row md:justify-between flex flex-wrap flex-col  justify-center text-center items-center container mx-auto px-10 ">
+    <footer className="md:flex-row md:justify-between md:text-lg text-base flex flex-wrap flex-col justify-center text-center items-center container mx-auto px-4 md:px-10">
       <p>{new Date().getFullYear()} &copy; Uncut Diamonds</p>
       <ul className="flex gap-8">
         <li>
@@ -21,7 +21,7 @@ const Footer = () => {
             rel="noreferrer"
             className="font-bold transition underline hover:text-zinc-400"
           >
-            konradtrosa.com
+            konradrosa.com
           </a>
         </li>
       </ul>

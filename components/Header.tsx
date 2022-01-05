@@ -11,7 +11,7 @@ const Header = () => {
   const [showNav, setShowNav] = useState(false)
 
   return (
-    <header className="flex container mx-auto px-10">
+    <header className="flex container mx-auto px-4 md:px-10">
       <nav className="min-w-full">
         <ul className="items-center flex gap-6 h-full">
           <li className="mr-auto self-center">

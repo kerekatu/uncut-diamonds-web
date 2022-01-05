@@ -22,7 +22,7 @@ const Layout = ({ children, showHeader = true, pageTitle }: LayoutProps) => {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       {showHeader && <Header />}
-      <main className="flex container mx-auto px-10">{children}</main>
+      <main className="flex container mx-auto px-4 md:px-10">{children}</main>
       <Footer />
     </div>
   )
