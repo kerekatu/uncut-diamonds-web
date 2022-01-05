@@ -35,7 +35,7 @@ const Header = () => {
                   signIn('discord')
                 }}
               >
-                Zaloguj się
+                Zaloguj
               </a>
             </li>
           ) : (
