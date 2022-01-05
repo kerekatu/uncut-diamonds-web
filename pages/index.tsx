@@ -11,7 +11,7 @@ const TAGS = ['🇵🇱 Społeczność', '🕹️ Gry', '👋 Rozmowy', '🎉 Wy
 export default function Home() {
   return (
     <Layout showHeader={false} pageTitle="Strona Główna">
-      <section className="flex flex-col w-full h-screen items-center justify-center gap-2">
+      <section className="flex flex-col w-full items-center justify-center gap-2">
         <Image
           src="/static/logo.svg"
           alt="Uncut Diamonds Logo"
@@ -19,8 +19,8 @@ export default function Home() {
           width={540}
           className="pointer-events-none"
         />
-        <div className="w-[600px] text-center mb-8">
-          <ul className="flex gap-4 items-center justify-center mb-6">
+        <div className="text-center mb-8">
+          <ul className="flex-wrap flex gap-4 items-center justify-center mb-6">
             {TAGS.map((tag, index) => (
               <li
                 className="px-4 py-2 bg-zinc-900 rounded-xl text-xl font-semibold"
@@ -31,13 +31,13 @@ export default function Home() {
             ))}
           </ul>
 
-          <h3 className="text-xl">
+          <h3 className="text-xl md:w-[600px]">
             U nas poznasz masę unikalnych i zarazem otwartych ludzi na nowe
             znajomości. Aktywni za dnia, a nocą tym bardziej!
           </h3>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex flex-wrap justify-center items-center gap-6">
           <div className="relative group">
             <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 via-indigo-500 to-pink-500 rounded-full blur opacity-75 group-hover:opacity-100 animate-tilt transition duration-200"></div>
             <a
@@ -50,7 +50,7 @@ export default function Home() {
             </a>
           </div>
           <Link href="/shop">
-            <a className="block border-4 border-gray-100 px-16 py-3 rounded-full text-gray-100 font-bold text-xl uppercase hover:bg-gray-100 hover:text-black shadow-md transition-all duration-200">
+            <a className="block border-4 border-zinc-700 px-16 py-3 rounded-full text-zinc-100 font-bold text-xl uppercase hover:bg-zinc-100 hover:border-zinc-100 hover:text-black shadow-md transition-all duration-200">
               Sklep
             </a>
           </Link>

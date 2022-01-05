@@ -37,8 +37,8 @@ const Shop = () => {
       body: JSON.stringify({
         id: session?.user.id,
         item: selectedItem?.id,
-        ref: session?.user.ref,
-      }),
+        ref: session?.user.ref
+      })
     })
     const response = await purchase.json()
 
@@ -81,7 +81,7 @@ const Shop = () => {
                         : setSelectedItem({
                             id: item.ref['@ref'].id,
                             title: item.data.title,
-                            price: item.data.price,
+                            price: item.data.price
                           }))
                     }
                   >
