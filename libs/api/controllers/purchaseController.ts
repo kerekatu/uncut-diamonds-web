@@ -42,3 +42,22 @@ export const handlePurchase = async ({
     return { status: '400', error }
   }
 }
+
+export const getPurchases = async () => {
+  try {
+    const response: any = await faunaClient.query(
+      q.Map(
+        q.Paginate(q.Documents(q.Collection('purchases'))),
+        q.Lambda('ref', q.Get(q.Var('ref')))
+      )
+    )
+
+    if (!response) return { status: '404', error: 'No purchases found' }
+
+    const { data } = response
+
+    return { status: '200', data }
+  } catch (error) {
+    return { status: '400', error }
+  }
+}

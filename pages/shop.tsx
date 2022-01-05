@@ -1,12 +1,13 @@
 import Layout from '@/components/Layout'
 import { useModal } from '@/hooks/useModal'
 import { addSpaceEveryCharacter } from '@/libs/helpers'
-import { useSession } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useState } from 'react'
 import toast, { Toaster } from 'react-hot-toast'
 import useSWR from 'swr'
 import dynamic from 'next/dynamic'
+import PurchaseList from '@/components/PurchaseList'
 
 const Modal = dynamic(() => import('@/components/Modal'))
 
@@ -37,8 +38,8 @@ const Shop = () => {
       body: JSON.stringify({
         id: session?.user.id,
         item: selectedItem?.id,
-        ref: session?.user.ref
-      })
+        ref: session?.user.ref,
+      }),
     })
     const response = await purchase.json()
 
@@ -56,8 +57,12 @@ const Shop = () => {
   return (
     <>
       <Layout pageTitle="Sklep">
-        <section className="flex flex-col gap-6 mb-24">
-          <ul className="grid lg:grid-cols-2 xl:grid-cols-3 gap-12">
+        <section
+          className={`flex flex-col gap-6 ${
+            selectedItem || !session ? 'mb-16' : ''
+          }`}
+        >
+          <ul className="grid gap-8 lg:gap-12 lg:grid-cols-2 xl:grid-cols-3">
             {shop?.data.length > 1 ? (
               shop.data
                 .sort((a: any, b: any) => a.data.price - b.data.price)
@@ -81,7 +86,7 @@ const Shop = () => {
                         : setSelectedItem({
                             id: item.ref['@ref'].id,
                             title: item.data.title,
-                            price: item.data.price
+                            price: item.data.price,
                           }))
                     }
                   >
@@ -118,43 +123,56 @@ const Shop = () => {
             )}
           </ul>
           {!session ? (
-            <div className="fixed bottom-0 right-0 bg-zinc-900 w-full px-10 p-6 flex items-center justify-center text-2xl font-bold gap-2 h-24">
-              Zaloguj się by skorzystać ze sklepu
+            <div className="fixed bottom-0 inset-x-0 bg-zinc-900 w-full px-10 p-6 flex items-center justify-center  font-bold gap-2 h-24 z-10 text-lg md:text-2xl">
+              <a
+                href="/api/auth/signin"
+                className="text-green-500 underline transition-colors hover:text-green-600"
+                onClick={(e) => {
+                  e.preventDefault()
+                  signIn('discord')
+                }}
+              >
+                Zaloguj się
+              </a>{' '}
+              by skorzystać ze sklepu
             </div>
           ) : (
             selectedItem && (
-              <div className="fixed bottom-0 right-0 bg-zinc-900 w-full px-10 p-6 flex items-center justify-between gap-2 transition-all h-24">
-                <div className="flex flex-col">
-                  <span className="flex items-center gap-1">
-                    <strong>Do zapłaty:</strong>{' '}
-                    {addSpaceEveryCharacter(selectedItem!.price)}{' '}
-                    <Image
-                      src="/static/diament.png"
-                      alt="Uncut Diamonds Currency Symbol"
-                      width={16}
-                      height={16}
-                      quality={100}
-                    />{' '}
-                    ({user.data.bank - selectedItem!.price})
-                  </span>
-                  <span className="flex gap-1">
-                    <strong>Wybrane:</strong>
-                    {selectedItem!.title}
-                  </span>
+              <div className="block fixed bottom-0 right-0 bg-zinc-900 w-full px-10 p-6 gap-2 h-24">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="flex items-center gap-1">
+                      <strong>Do zapłaty:</strong>{' '}
+                      {addSpaceEveryCharacter(selectedItem!.price)}{' '}
+                      <Image
+                        src="/static/diament.png"
+                        alt="Uncut Diamonds Currency Symbol"
+                        width={16}
+                        height={16}
+                        quality={100}
+                      />{' '}
+                      ({user.data.bank - selectedItem!.price})
+                    </span>
+                    <span className="flex gap-1">
+                      <strong>Wybrane:</strong>
+                      {selectedItem!.title}
+                    </span>
+                  </div>
+                  <button
+                    className={`bg-green-600 px-24 py-2 rounded-xl text-white font-bold text-xl transition-all ${
+                      selectedItem
+                        ? 'opacity-100 cursor-pointer hover:bg-green-500'
+                        : 'opacity-50 cursor-not-allowed'
+                    }`}
+                    onClick={handleToggle}
+                  >
+                    Kup
+                  </button>
                 </div>
-                <button
-                  className={`bg-green-600 px-24 py-2 rounded-xl text-white font-bold text-xl transition-all ${
-                    selectedItem
-                      ? 'opacity-100 cursor-pointer hover:bg-green-500'
-                      : 'opacity-50 cursor-not-allowed'
-                  }`}
-                  onClick={handleToggle}
-                >
-                  Kup
-                </button>
               </div>
             )
           )}
+          <PurchaseList />
         </section>
         <Toaster />
       </Layout>
