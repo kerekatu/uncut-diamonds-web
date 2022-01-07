@@ -2,6 +2,7 @@ import { patchUserOnPurchase } from '@/libs/api/controllers/userController'
 import { faunaClient } from '@/libs/fauna'
 import { query as q } from 'faunadb'
 import { getShopItemByRef } from '@/libs/api/controllers/shopControllers'
+import logPurchase from '@/libs/webhook'
 
 export const handlePurchase = async ({
   id,
@@ -36,6 +37,8 @@ export const handlePurchase = async ({
     )
 
     if (!response) return { status: '404', error: 'No users found' }
+
+    logPurchase(id, shopItem.data)
 
     return { status: '200', data: response }
   } catch (error) {

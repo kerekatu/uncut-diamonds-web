@@ -1,23 +1,25 @@
+type User = {
+  rank: string
+  user_id: string
+  cash: number
+  bank: number
+  total: number
+}
+
 export interface IUsers {
-  users: {
-    status: string
-    data: {
-      rank: string
-      user_id: string
-      cash: number
-      bank: number
-      total: number
-    }
-  }
+  status: string
+  data: User[]
 }
 
 export interface IUser {
   status: string
-  data: {
-    rank: string
-    user_id: string
-    cash: number
-    bank: number
-    total: number
-  }
+  data: User
+}
+
+export interface IShopItem {
+  title: string
+  description: string
+  price: number
+  stock: string
+  image: string
 }
