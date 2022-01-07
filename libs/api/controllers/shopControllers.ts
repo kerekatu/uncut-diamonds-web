@@ -1,5 +1,6 @@
 import { faunaClient } from '@/libs/fauna'
 import { query as q } from 'faunadb'
+import { IShopItem } from 'types/types'
 
 // TODO: add types
 
@@ -67,26 +68,20 @@ export const createShopItem = async ({
 }
 
 export const updateShopItem = async ({
-  title,
-  description,
-  price,
   stock,
-  image,
+  ref,
 }: {
-  title: string
-  description: string
-  price: number
-  stock: string
-  image: string
+  stock: number
+  ref: string
 }) => {
   try {
     const response = await faunaClient.query(
-      q.Update(q.Collection('shop'), {
-        data: { title, description, price, stock, image },
+      q.Update(q.Ref(q.Collection('shop'), ref), {
+        data: { stock: (stock - 1).toString() },
       })
     )
 
-    if (!response) return { status: '404', error: 'Could not create shop item' }
+    if (!response) return { status: '404', error: 'Could not update shop item' }
 
     return { status: '200', data: response }
   } catch (error) {

@@ -17,6 +17,7 @@ interface ISelectedItem {
   id: string
   title: string
   price: number
+  stock?: string
 }
 
 const Shop = () => {
@@ -58,13 +59,14 @@ const Shop = () => {
     <>
       <Layout pageTitle="Sklep">
         <section
-          className={`flex flex-col gap-6 ${
+          className={`flex flex-col gap-16 ${
             selectedItem || !session ? 'mb-16' : ''
           }`}
         >
           <ul className="grid gap-8 lg:gap-12 lg:grid-cols-2 xl:grid-cols-3">
             {shop?.data.length > 1 ? (
               shop.data
+                .filter((item: any) => item.data.stock !== '0')
                 .sort((a: any, b: any) => a.data.price - b.data.price)
                 .map((item: any) => (
                   <li
