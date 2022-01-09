@@ -8,28 +8,29 @@ import toast, { Toaster } from 'react-hot-toast'
 import useSWR from 'swr'
 import dynamic from 'next/dynamic'
 import PurchaseList from '@/components/PurchaseList'
+import { NextPage } from 'next'
 
 const Modal = dynamic(() => import('@/components/Modal'))
 
 // TODO: add types
 
-interface ISelectedItem {
+interface SelectedItem {
   id: string
   title: string
   price: number
   stock?: string
 }
 
-const Shop = () => {
+const Shop: NextPage = () => {
   const { data: session } = useSession()
   const { data: shop } = useSWR('/api/shop')
   const { data: user } = useSWR(`/api/users/${session?.user.id}`)
-  const [selectedItem, setSelectedItem] = useState<ISelectedItem | null>(null)
+  const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null)
   const { modalOpen, handleToggle, handleCancel } = useModal()
 
   if (!user && !shop) return <></>
 
-  const isAffordable = (item: ISelectedItem): boolean =>
+  const isAffordable = (item: SelectedItem): boolean =>
     item && item!.price <= user?.data.bank
 
   const handleAccept = async () => {
@@ -57,7 +58,7 @@ const Shop = () => {
 
   return (
     <>
-      <Layout pageTitle="Sklep">
+      <Layout customMeta={{ title: 'Sklep' }}>
         <section
           className={`flex flex-col gap-16 ${
             selectedItem || !session ? 'mb-16' : ''

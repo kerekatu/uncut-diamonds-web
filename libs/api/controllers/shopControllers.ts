@@ -1,6 +1,5 @@
 import { faunaClient } from '@/libs/fauna'
 import { query as q } from 'faunadb'
-import { IShopItem } from 'types/types'
 
 // TODO: add types
 

@@ -1,16 +1,14 @@
 import Layout from '@/components/Layout'
+import { MagicButton, BUTTON_STYLES } from '@/components/ui/Button'
+import { NextPage } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-// import { getUsers } from '@/libsapi/controllers/userController'
-// import { useSession, getSession } from 'next-auth/react'
-// import type { GetServerSideProps } from 'next'
-// import type { Session } from 'next-auth'
 
 const TAGS = ['🇵🇱 Społeczność', '🕹️ Gry', '👋 Rozmowy', '🎉 Wydarzenia']
 
-export default function Home() {
+const Home: NextPage = () => {
   return (
-    <Layout showHeader={false} pageTitle="Strona Główna">
+    <Layout showHeader={false} customMeta={{ title: 'Strona Główna' }}>
       <section className="flex flex-col w-full items-center justify-center gap-2">
         <Image
           src="/static/logo.svg"
@@ -38,21 +36,9 @@ export default function Home() {
         </div>
 
         <div className="flex flex-wrap justify-center items-center gap-6">
-          <div className="relative group">
-            <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 via-indigo-500 to-pink-500 rounded-full blur opacity-75 group-hover:opacity-100 animate-tilt transition duration-200"></div>
-            <a
-              href="https://discord.gg/HYsRmJVjSW"
-              target="_blank"
-              rel="noreferrer"
-              className="relative block tracking-widest bg-gradient-to-tr from-cyan-500 via-indigo-500 to-pink-500 px-16 py-4 rounded-full text-white font-bold text-xl"
-            >
-              <span className="drop-shadow-md uppercase">Dołącz</span>
-            </a>
-          </div>
+          <MagicButton />
           <Link href="/shop">
-            <a className="block border-4 border-zinc-700 px-16 py-3 rounded-full text-zinc-100 font-bold text-xl uppercase hover:bg-zinc-100 hover:border-zinc-100 hover:text-black shadow-md transition-all duration-200">
-              Sklep
-            </a>
+            <a className={BUTTON_STYLES.ctaSecondary}>Sklep</a>
           </Link>
         </div>
       </section>
@@ -60,13 +46,4 @@ export default function Home() {
   )
 }
 
-// export const getServerSideProps: GetServerSideProps<{
-//   session: Session | null
-// }> = async (context) => {
-//   return {
-//     props: {
-//       session: await getSession(context),
-//       users: await getUsers(),
-//     },
-//   }
-// }
+export default Home

@@ -2,15 +2,15 @@ import { RefObject, useEffect } from 'react'
 
 export default function useOnClickOutside<T extends HTMLElement = HTMLElement>(
   ref: RefObject<T>,
-  handler: (event: MouseEvent | TouchEvent) => void
+  handler: () => void
 ): void {
   useEffect(() => {
-    const listener = (event: any) => {
-      if (!ref.current || ref.current.contains(event.target)) {
+    const listener = (event: MouseEvent | TouchEvent): void => {
+      if (!ref.current || ref.current.contains(event.target as Node)) {
         return
       }
 
-      handler(event)
+      handler()
     }
 
     document.addEventListener('mousedown', listener)

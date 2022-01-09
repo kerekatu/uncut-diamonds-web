@@ -1,7 +1,7 @@
-import React from 'react'
+import { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
-interface IProps {
+interface ModalProps {
   acceptButton: {
     title: string
     handleAccept: () => void
@@ -10,10 +10,10 @@ interface IProps {
     title: string
     handleCancel: () => void
   }
-  children?: React.ReactNode
+  children?: ReactNode
 }
 
-const Modal = ({ acceptButton, cancelButton, children }: IProps) => {
+const Modal = ({ acceptButton, cancelButton, children }: ModalProps) => {
   return createPortal(
     <div className="top-0 left-0 fixed w-full h-screen z-40 transition-all overflow-hidden before:absolute before:top-0 before:left-0 before:h-full before:w-full before:bg-black before:opacity-70 before:pointer-events-none">
       <div className="absolute flex flex-col gap-6 bg-zinc-800 w-[600px] max-w-full rounded-xl p-12 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">

@@ -1,4 +1,13 @@
-type User = {
+export type Meta = {
+  title: string
+  subtitle: string
+  description: string
+  url: string
+  type: string
+  image: string
+}
+
+export type User = {
   rank: string
   user_id: string
   cash: number
@@ -8,12 +17,7 @@ type User = {
 
 export interface IUsers {
   status: string
-  data: User[]
-}
-
-export interface IUser {
-  status: string
-  data: User
+  data: User[] | User
 }
 
 export interface IShopItem {

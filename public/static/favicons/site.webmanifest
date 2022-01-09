@@ -1,0 +1,17 @@
+{
+  "name": "Uncut Diamonds",
+  "short_name": "Uncut Diamonds",
+  "description": "Dołącz do naszej społeczności Uncut Diamonds znajdującej się na discordzie. Łączymy przyjemną atmosferę z ciągłą zabawą. Gadamy, gramy i wspólnie bierzemy udział w wydarzeniach z nagrodami! U nas na pewno się odnajdziesz!",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/android-chrome-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#27272a",
+  "background_color": "#27272a",
+  "display": "standalone",
+  "orientation": "portrait-primary"
+}

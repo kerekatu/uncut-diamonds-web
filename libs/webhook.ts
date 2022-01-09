@@ -1,5 +1,5 @@
 import { WebhookClient } from 'discord.js'
-import { IShopItem } from 'types/types'
+import { IShopItem } from 'types'
 
 const { WEBHOOK_ID, WEBHOOK_TOKEN } = process.env
 

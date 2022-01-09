@@ -5,10 +5,10 @@ import Image from 'next/image'
 import { useRef, useState } from 'react'
 
 import type { Session } from 'next-auth'
-import { IUser } from 'types/types'
+import type { User } from 'types'
 import useOnClickOutside from '@/hooks/useOnClickOutside'
 
-const UserNav = ({ user, session }: { user: IUser; session: Session }) => {
+const UserNav = ({ user, session }: { user: User; session: Session }) => {
   const dropdownRef = useRef(null)
   const [showNav, setShowNav] = useState<boolean>(false)
 
@@ -22,7 +22,7 @@ const UserNav = ({ user, session }: { user: IUser; session: Session }) => {
         <div className="flex flex-col justify-center items-end leading-6">
           <span>{session.user.name}</span>
           <span className="flex items-center gap-1 font-bold">
-            {user.data.bank > 0 ? addSpaceEveryCharacter(user.data.bank) : 0}
+            {user.bank > 0 ? addSpaceEveryCharacter(user.bank) : 0}
             <Image
               src="/static/diament.png"
               alt="Uncut Diamonds Currency Symbol"
@@ -80,9 +80,7 @@ const UserNav = ({ user, session }: { user: IUser; session: Session }) => {
               <li className="flex flex-col leading-6 items-center">
                 <span>{session.user.name}</span>
                 <span className="flex items-center gap-1 font-bold">
-                  {user.data.bank > 0
-                    ? addSpaceEveryCharacter(user.data.bank)
-                    : 0}
+                  {user.bank > 0 ? addSpaceEveryCharacter(user.bank) : 0}
                   <Image
                     src="/static/diament.png"
                     alt="Uncut Diamonds Currency Symbol"

@@ -39,7 +39,7 @@ const Header = () => {
               </a>
             </li>
           ) : (
-            user && session && <UserNav user={user} session={session} />
+            user && <UserNav user={user.data} session={session} />
           )}
         </ul>
       </nav>
