@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router'
+import nProgress from 'nprogress'
 import { useEffect, useState } from 'react'
 
 const useLoader = () => {
@@ -6,8 +7,14 @@ const useLoader = () => {
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    const handleStart = () => setLoading(true)
-    const handleComplete = () => setLoading(false)
+    const handleStart = () => {
+      nProgress.start()
+      setLoading(true)
+    }
+    const handleComplete = () => {
+      nProgress.done()
+      setLoading(false)
+    }
 
     router.events.on('routeChangeStart', handleStart)
     router.events.on('routeChangeComplete', handleComplete)

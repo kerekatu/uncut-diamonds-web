@@ -24,7 +24,12 @@ const Header = () => {
                 <img
                   src="/static/logo.svg"
                   alt="Uncut Diamonds Logo"
-                  className="h-16"
+                  className="h-16 hidden sm:block"
+                />
+                <img
+                  src="/static/logo-compact.svg"
+                  alt="Uncut Diamonds Logo"
+                  className="h-16 block sm:hidden"
                 />
               </a>
             </Link>
@@ -32,7 +37,7 @@ const Header = () => {
           {!session ? (
             <li>
               <Button variant="secondary" onClick={() => signIn('discord')}>
-                Zaloguj
+                Zaloguj się
               </Button>
             </li>
           ) : (

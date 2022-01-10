@@ -15,7 +15,7 @@ export const BUTTON_STYLES: Record<Variant, string> = {
     'block border-4 border-zinc-700 px-16 py-3 rounded-full text-zinc-100 font-bold text-xl uppercase hover:bg-zinc-100 hover:border-zinc-100 hover:text-black shadow-md transition-all duration-200',
   primary: 'font-bold px-6 py-2 border-b-2 rounded-md transition-colors',
   secondary:
-    'bg-zinc-900 bg-opacity-20 py-2 px-6 flex items-center rounded-xl h-16 transition-all  hover:bg-opacity-100',
+    'bg-zinc-900 border-2 border-zinc-900 bg-opacity-20 py-2 px-6 flex items-center rounded-xl h-16 transition-all  hover:bg-opacity-100',
 }
 
 const Button = <T extends ElementType = 'button'>({
@@ -54,7 +54,5 @@ export const MagicButton = () => {
     </div>
   )
 }
-
-// TODO: Add LinkButton Component for next/link with ref forwarding
 
 export default Button
