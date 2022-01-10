@@ -1,5 +1,6 @@
 import { faunaClient } from '@/libs/fauna'
 import { query as q } from 'faunadb'
+import { User } from 'types'
 
 export const getUsers = async () => {
   try {
@@ -11,7 +12,7 @@ export const getUsers = async () => {
         },
       }
     )
-    const users = await response.json()
+    const users: User[] = await response.json()
 
     if (!users) return { status: '404', error: 'No users found' }
 
@@ -31,7 +32,7 @@ export const getUserById = async (id: string) => {
         },
       }
     )
-    const user = await response.json()
+    const user: User = await response.json()
 
     if (!user) return { status: '404', error: 'No user found' }
 
@@ -53,7 +54,7 @@ export const patchUserOnPurchase = async (
 
     const userBalance = await getUserById(id)
 
-    if (userBalance && userBalance.data.bank < price)
+    if (userBalance.data && userBalance.data.bank < price)
       return {
         status: '401',
         error: "You don't have enough money to buy it",

@@ -7,3 +7,9 @@ export function addSpaceEveryCharacter(string: string | number) {
 export function random(min: number, max: number) {
   Math.floor(Math.random() * (max - min)) + min
 }
+
+export const formatHoursToDays = (hours: number): string => {
+  const str = (hours / 24).toString()
+
+  return str === '1' ? `${str} dzień` : `${str} dni`
+}

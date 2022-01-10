@@ -1,26 +1,26 @@
 import { faunaClient } from '@/libs/fauna'
-import { query as q } from 'faunadb'
-
-// TODO: add types
+import { query as q, values } from 'faunadb'
+import { ShopItem } from 'types'
 
 export const getShopItems = async () => {
   try {
-    const response: any = await faunaClient.query(
-      q.Map(
-        q.Paginate(q.Documents(q.Collection('shop'))),
-        q.Lambda(
-          'ref',
-          q.Let(
-            { doc: q.Get(q.Var('ref')) },
-            {
-              ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
-              ts: q.Select(['ts'], q.Var('doc')),
-              data: q.Select(['data'], q.Var('doc')),
-            }
+    const response: { data: values.Document<ShopItem>[] } =
+      await faunaClient.query(
+        q.Map(
+          q.Paginate(q.Documents(q.Collection('shop'))),
+          q.Lambda(
+            'ref',
+            q.Let(
+              { doc: q.Get(q.Var('ref')) },
+              {
+                ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
+                ts: q.Select(['ts'], q.Var('doc')),
+                data: q.Select(['data'], q.Var('doc')),
+              }
+            )
           )
         )
       )
-    )
 
     if (!response) return { status: '404', error: 'No shop items found' }
 
@@ -34,7 +34,7 @@ export const getShopItems = async () => {
 
 export const getShopItemByRef = async (ref: string) => {
   try {
-    const response: any = await faunaClient.query(
+    const response: values.Document<ShopItem> = await faunaClient.query(
       q.Get(q.Ref(q.Collection('shop'), ref))
     )
 
@@ -53,18 +53,13 @@ export const createShopItem = async ({
   description,
   price,
   stock,
+  duration,
   image,
-}: {
-  title: string
-  description: string
-  price: number
-  stock: string
-  image: string
-}) => {
+}: ShopItem) => {
   try {
-    const response = await faunaClient.query(
+    const response: values.Document<ShopItem> = await faunaClient.query(
       q.Create(q.Collection('shop'), {
-        data: { title, description, price, stock, image },
+        data: { title, description, price, stock, duration, image },
       })
     )
 
@@ -84,7 +79,7 @@ export const updateShopItem = async ({
   ref: string
 }) => {
   try {
-    const response = await faunaClient.query(
+    const response: values.Document<ShopItem> = await faunaClient.query(
       q.Update(q.Ref(q.Collection('shop'), ref), {
         data: { stock: (stock - 1).toString() },
       })

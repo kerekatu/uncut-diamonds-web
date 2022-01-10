@@ -1,6 +1,6 @@
 import Layout from '@/components/Layout'
 import { useModal } from '@/hooks/useModal'
-import { addSpaceEveryCharacter } from '@/libs/helpers'
+import { addSpaceEveryCharacter, formatHoursToDays } from '@/libs/helpers'
 import { signIn, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useState } from 'react'
@@ -30,6 +30,8 @@ const Shop: NextPage = () => {
   )
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null)
   const { modalOpen, handleToggle, handleCancel } = useModal()
+
+  console.log(user, shop)
 
   if (!user?.data || !shop || !Array.isArray(shop?.data)) return <Loader />
 
@@ -80,7 +82,7 @@ const Shop: NextPage = () => {
                 .sort((a, b) => a.data.price - b.data.price)
                 .map((item) => (
                   <li
-                    className={`border-2 border-zinc-900 shadow-xl bg-zinc-900 rounded-xl px-8 py-4 cursor-pointer transition-all  ${
+                    className={`border-2 border-zinc-900 shadow-xl bg-zinc-900 rounded-xl px-8 py-4 cursor-pointer transition-all ${
                       isAffordable(item.data) &&
                       (selectedItem?.id === item.ref.id
                         ? 'border-2 !border-green-600 drop-shadow-xl'
@@ -103,9 +105,15 @@ const Shop: NextPage = () => {
                     }
                   >
                     <div className="flex flex-col h-full">
-                      <span className="text-2xl font-bold leading-7">
+                      {item.data?.duration && (
+                        <span className="self-start border border-zinc-800 px-3 py-1 rounded-md font-normal text-base">
+                          {formatHoursToDays(item.data.duration)}
+                        </span>
+                      )}
+                      <h3 className="flex items-center mt-2 gap-x-2 gap-y-2 text-2xl font-bold leading-7">
                         {item.data.title}
-                      </span>
+                      </h3>
+
                       <span className="font-light leading-6 mt-2 mb-auto">
                         {item.data.description}
                       </span>
@@ -151,13 +159,13 @@ const Shop: NextPage = () => {
                   initial={{ translateY: 100 }}
                   animate={{ translateY: 0 }}
                   exit={{ translateY: 100 }}
-                  className="block fixed bottom-0 right-0 bg-zinc-900 w-full px-10 p-6 gap-2 h-24"
+                  className="flex fixed bottom-0 right-0 bg-zinc-900 w-full px-10 py-4 gap-2 h-24"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex flex-col">
+                  <div className="flex w-full items-center justify-center md:justify-between">
+                    <div className="hidden md:flex md:flex-col">
                       <span className="flex items-center gap-1">
                         <strong>Do zapłaty:</strong>{' '}
-                        {addSpaceEveryCharacter(selectedItem!.price)}{' '}
+                        {addSpaceEveryCharacter(selectedItem.price)}{' '}
                         <Image
                           src="/static/diament.png"
                           alt="Uncut Diamonds Currency Symbol"
@@ -165,11 +173,11 @@ const Shop: NextPage = () => {
                           height={16}
                           quality={100}
                         />{' '}
-                        ({user.data.bank - selectedItem!.price})
+                        ({user.data.bank - selectedItem.price})
                       </span>
                       <span className="flex gap-1">
                         <strong>Wybrane:</strong>
-                        {selectedItem!.title}
+                        {selectedItem.title}
                       </span>
                     </div>
                     <button

@@ -37,7 +37,8 @@ export interface ShopItem {
   description: string
   price: number
   stock: string
-  image: string
+  duration?: number
+  image?: string
 }
 
 export interface Purchase {

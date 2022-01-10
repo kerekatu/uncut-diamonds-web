@@ -1,12 +1,12 @@
 import { patchUserOnPurchase } from '@/libs/api/controllers/userController'
 import { faunaClient } from '@/libs/fauna'
-import { query as q, Select } from 'faunadb'
+import { query as q, Select, values } from 'faunadb'
 import {
   getShopItemByRef,
   updateShopItem,
 } from '@/libs/api/controllers/shopControllers'
 import logPurchase from '@/libs/webhook'
-import { ApiResponse, Purchase } from 'types'
+import { Purchase } from 'types'
 
 export const handlePurchase = async ({
   id,
@@ -20,7 +20,7 @@ export const handlePurchase = async ({
   try {
     const shopItem = await getShopItemByRef(item)
 
-    if (!shopItem || shopItem.data.stock === '0')
+    if (!shopItem.data || shopItem.data.stock === '0')
       return {
         status: '404',
         error: 'No shop item found or it has expired',
@@ -50,7 +50,7 @@ export const handlePurchase = async ({
 
     const response = await faunaClient.query(
       q.Create(q.Collection('purchases'), {
-        data: { user_id: id, item: shopItem.data },
+        data: { userId: id, item: shopItem.data },
       })
     )
 
@@ -67,25 +67,26 @@ export const handlePurchase = async ({
 
 export const getPurchases = async () => {
   try {
-    const response: any = await faunaClient.query(
-      q.Map(
-        q.Paginate(q.Documents(q.Collection('purchases'))),
-        q.Lambda(
-          'ref',
-          q.Let(
-            { doc: q.Get(q.Var('ref')) },
-            {
-              ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
-              ts: q.Select(['ts'], q.Var('doc')),
-              data: {
-                userId: q.Select(['data', 'user_id'], q.Var('doc')),
-                item: q.Select(['data', 'item'], q.Var('doc')),
-              },
-            }
+    const response: { data: values.Document<Purchase>[] } =
+      await faunaClient.query(
+        q.Map(
+          q.Paginate(q.Documents(q.Collection('purchases'))),
+          q.Lambda(
+            'ref',
+            q.Let(
+              { doc: q.Get(q.Var('ref')) },
+              {
+                ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
+                ts: q.Select(['ts'], q.Var('doc')),
+                data: {
+                  userId: q.Select(['data', 'userId'], q.Var('doc')),
+                  item: q.Select(['data', 'item'], q.Var('doc')),
+                },
+              }
+            )
           )
         )
       )
-    )
 
     if (!response) return { status: '404', error: 'No purchases found' }
 
