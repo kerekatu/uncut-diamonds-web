@@ -1,11 +1,12 @@
 import { patchUserOnPurchase } from '@/libs/api/controllers/userController'
 import { faunaClient } from '@/libs/fauna'
-import { query as q } from 'faunadb'
+import { query as q, Select } from 'faunadb'
 import {
   getShopItemByRef,
   updateShopItem,
 } from '@/libs/api/controllers/shopControllers'
 import logPurchase from '@/libs/webhook'
+import { ApiResponse, Purchase } from 'types'
 
 export const handlePurchase = async ({
   id,
@@ -69,7 +70,20 @@ export const getPurchases = async () => {
     const response: any = await faunaClient.query(
       q.Map(
         q.Paginate(q.Documents(q.Collection('purchases'))),
-        q.Lambda('ref', q.Get(q.Var('ref')))
+        q.Lambda(
+          'ref',
+          q.Let(
+            { doc: q.Get(q.Var('ref')) },
+            {
+              ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
+              ts: q.Select(['ts'], q.Var('doc')),
+              data: {
+                userId: q.Select(['data', 'user_id'], q.Var('doc')),
+                item: q.Select(['data', 'item'], q.Var('doc')),
+              },
+            }
+          )
+        )
       )
     )
 

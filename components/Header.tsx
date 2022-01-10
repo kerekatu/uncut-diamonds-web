@@ -2,10 +2,14 @@ import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import useSWR from 'swr'
 import UserNav from '@/components/UserNav'
+import Button from '@/components/ui/Button'
+import { User } from 'types'
 
 const Header = () => {
   const { data: session } = useSession()
-  const { data: user } = useSWR(`/api/users/${session?.user.id}`)
+  const { data: user } = useSWR<{ status: string; data: User }>(
+    `/api/users/${session?.user.id}`
+  )
 
   return (
     <header className="flex container mx-auto px-4 md:px-10">
@@ -27,16 +31,9 @@ const Header = () => {
           </li>
           {!session ? (
             <li>
-              <a
-                href="/api/auth/signin"
-                className="bg-zinc-900 bg-opacity-20 py-2 px-6 flex items-center rounded-xl h-16 transition-all  hover:bg-opacity-100"
-                onClick={(e) => {
-                  e.preventDefault()
-                  signIn('discord')
-                }}
-              >
+              <Button variant="secondary" onClick={() => signIn('discord')}>
                 Zaloguj
-              </a>
+              </Button>
             </li>
           ) : (
             user && <UserNav user={user.data} session={session} />

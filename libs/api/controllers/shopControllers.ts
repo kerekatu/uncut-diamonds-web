@@ -8,7 +8,17 @@ export const getShopItems = async () => {
     const response: any = await faunaClient.query(
       q.Map(
         q.Paginate(q.Documents(q.Collection('shop'))),
-        q.Lambda('ref', q.Get(q.Var('ref')))
+        q.Lambda(
+          'ref',
+          q.Let(
+            { doc: q.Get(q.Var('ref')) },
+            {
+              ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
+              ts: q.Select(['ts'], q.Var('doc')),
+              data: q.Select(['data'], q.Var('doc')),
+            }
+          )
+        )
       )
     )
 

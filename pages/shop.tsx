@@ -9,10 +9,9 @@ import useSWR from 'swr'
 import dynamic from 'next/dynamic'
 import PurchaseList from '@/components/PurchaseList'
 import { NextPage } from 'next'
+import { ApiResponse, FaunaResponse, ShopItem, User } from 'types'
 
 const Modal = dynamic(() => import('@/components/Modal'))
-
-// TODO: add types
 
 interface SelectedItem {
   id: string
@@ -23,15 +22,18 @@ interface SelectedItem {
 
 const Shop: NextPage = () => {
   const { data: session } = useSession()
-  const { data: shop } = useSWR('/api/shop')
-  const { data: user } = useSWR(`/api/users/${session?.user.id}`)
+  const { data: shop } = useSWR<FaunaResponse<ShopItem>>('/api/shop')
+  const { data: user } = useSWR<ApiResponse<User>>(
+    `/api/users/${session?.user.id}`
+  )
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null)
   const { modalOpen, handleToggle, handleCancel } = useModal()
 
-  if (!user && !shop) return <></>
+  if (!user?.data || !shop || !Array.isArray(shop?.data)) return <></>
 
-  const isAffordable = (item: SelectedItem): boolean =>
-    item && item!.price <= user?.data.bank
+  const isAffordable = (item: ShopItem): boolean => {
+    return item && item.price <= user.data.bank
+  }
 
   const handleAccept = async () => {
     const purchase = await fetch('/api/shop', {
@@ -65,15 +67,15 @@ const Shop: NextPage = () => {
           }`}
         >
           <ul className="grid gap-8 lg:gap-12 lg:grid-cols-2 xl:grid-cols-3">
-            {shop?.data.length > 1 ? (
+            {shop.data.length > 1 ? (
               shop.data
-                .filter((item: any) => item.data.stock !== '0')
-                .sort((a: any, b: any) => a.data.price - b.data.price)
-                .map((item: any) => (
+                .filter((item) => item.data.stock !== '0')
+                .sort((a, b) => a.data.price - b.data.price)
+                .map((item) => (
                   <li
                     className={`border-2 bg-zinc-900 rounded-xl px-8 py-4 cursor-pointer border-zinc-700 ${
                       isAffordable(item.data) &&
-                      (selectedItem?.id === item.ref['@ref'].id
+                      (selectedItem?.id === item.ref.id
                         ? '!border-green-600'
                         : 'hover:border-green-600 hover:border-opacity-30')
                     } ${
@@ -81,13 +83,13 @@ const Shop: NextPage = () => {
                         ? 'opacity-50 cursor-default'
                         : ''
                     }`}
-                    key={item.ref['@ref'].id}
+                    key={item.ref.id}
                     onClick={() =>
                       isAffordable(item.data) &&
-                      (selectedItem?.id === item.ref['@ref'].id
+                      (selectedItem?.id === item.ref.id
                         ? setSelectedItem(null)
                         : setSelectedItem({
-                            id: item.ref['@ref'].id,
+                            id: item.ref.id,
                             title: item.data.title,
                             price: item.data.price,
                           }))
@@ -122,21 +124,17 @@ const Shop: NextPage = () => {
                   </li>
                 ))
             ) : (
-              <li>{shop?.data[0].title}</li>
+              <li>{shop.data[0].data.title}</li>
             )}
           </ul>
           {!session ? (
             <div className="fixed bottom-0 inset-x-0 bg-zinc-900 w-full px-10 p-6 flex items-center justify-center  font-bold gap-2 h-24 z-10 text-lg md:text-2xl">
-              <a
-                href="/api/auth/signin"
+              <button
                 className="text-green-500 underline transition-colors hover:text-green-600"
-                onClick={(e) => {
-                  e.preventDefault()
-                  signIn('discord')
-                }}
+                onClick={() => signIn('discord')}
               >
                 Zaloguj się
-              </a>{' '}
+              </button>{' '}
               by skorzystać ze sklepu
             </div>
           ) : (

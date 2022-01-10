@@ -7,9 +7,10 @@ import { useRef, useState } from 'react'
 import type { Session } from 'next-auth'
 import type { User } from 'types'
 import useOnClickOutside from '@/hooks/useOnClickOutside'
+import Button from '@/components/ui/Button'
 
 const UserNav = ({ user, session }: { user: User; session: Session }) => {
-  const dropdownRef = useRef(null)
+  const dropdownRef = useRef<HTMLLIElement>(null)
   const [showNav, setShowNav] = useState<boolean>(false)
 
   useOnClickOutside(dropdownRef, () => {
@@ -41,16 +42,9 @@ const UserNav = ({ user, session }: { user: User; session: Session }) => {
         />
       </li>
       <li className="hidden sm:block">
-        <a
-          href="/api/auth/signout"
-          className="bg-zinc-900 bg-opacity-20 py-2 px-6 flex items-center rounded-xl h-16 transition-all hover:bg-opacity-100"
-          onClick={(e) => {
-            e.preventDefault()
-            signOut()
-          }}
-        >
+        <Button variant="secondary" onClick={() => signOut()}>
           Wyloguj się
-        </a>
+        </Button>
       </li>
 
       <li className="relative sm:hidden" ref={dropdownRef}>
@@ -75,7 +69,8 @@ const UserNav = ({ user, session }: { user: User; session: Session }) => {
         </button>
 
         {showNav && (
-          <div className="absolute top-20 right-0 bg-zinc-900/80 rounded-xl z-10 w-max">
+          /* MOBILE VIEW */
+          <div className="absolute top-20 right-0 bg-zinc-900/90 rounded-xl z-10 w-max">
             <ul className="flex flex-col justify-center items-center gap-2 py-4 px-6">
               <li className="flex flex-col leading-6 items-center">
                 <span>{session.user.name}</span>
@@ -91,16 +86,13 @@ const UserNav = ({ user, session }: { user: User; session: Session }) => {
                 </span>
               </li>
               <li>
-                <a
-                  href="/api/auth/signout"
-                  className="text-red-500 font-semibold"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    signOut()
-                  }}
+                <Button
+                  variant="secondary"
+                  className="text-red-500 font-bold"
+                  onClick={() => signOut()}
                 >
                   Wyloguj się
-                </a>
+                </Button>
               </li>
             </ul>
           </div>

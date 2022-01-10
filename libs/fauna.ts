@@ -1,4 +1,4 @@
-import faunadb from 'faunadb'
+import faunadb, { query as q } from 'faunadb'
 
 export const faunaClient = new faunadb.Client({
   secret: process.env.FAUNADB_SECRET,

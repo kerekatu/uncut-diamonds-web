@@ -1,15 +1,9 @@
-import Link from 'next/link'
-import {
-  ComponentPropsWithoutRef,
-  ElementType,
-  forwardRef,
-  ReactNode,
-} from 'react'
+import { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react'
 
 type Variant = 'cta' | 'ctaSecondary' | 'primary' | 'secondary'
 
 type ButtonProps<T extends ElementType> = {
-  renderAs: T
+  renderAs?: T
   children: ReactNode
   className?: string
   variant: Variant
@@ -21,7 +15,7 @@ export const BUTTON_STYLES: Record<Variant, string> = {
     'block border-4 border-zinc-700 px-16 py-3 rounded-full text-zinc-100 font-bold text-xl uppercase hover:bg-zinc-100 hover:border-zinc-100 hover:text-black shadow-md transition-all duration-200',
   primary: 'font-bold px-6 py-2 border-b-2 rounded-md transition-colors',
   secondary:
-    'border-gray-700 border-2 bg-gray-700 bg-opacity-20 px-8 py-2 rounded-md transition-colors hover:bg-opacity-100',
+    'bg-zinc-900 bg-opacity-20 py-2 px-6 flex items-center rounded-xl h-16 transition-all  hover:bg-opacity-100',
 }
 
 const Button = <T extends ElementType = 'button'>({
@@ -31,7 +25,7 @@ const Button = <T extends ElementType = 'button'>({
   className,
   ...rest
 }: ButtonProps<T>): JSX.Element => {
-  const Component: ElementType = renderAs
+  const Component: ElementType = renderAs ?? 'button'
 
   return (
     <Component
