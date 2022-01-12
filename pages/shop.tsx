@@ -31,8 +31,6 @@ const Shop: NextPage = () => {
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null)
   const { modalOpen, handleToggle, handleCancel } = useModal()
 
-  console.log(user, shop)
-
   if (!user?.data || !shop || !Array.isArray(shop?.data)) return <Loader />
 
   const isAffordable = (item: ShopItem): boolean => {
@@ -204,10 +202,11 @@ const Shop: NextPage = () => {
         <Modal
           acceptButton={{ title: 'Akceptuj', handleAccept }}
           cancelButton={{ title: 'Anuluj', handleCancel }}
+          modalOpen={modalOpen}
         >
           <div className="flex flex-col items-center gap-2 text-center">
             Kupujesz: {selectedItem.title}
-            <div className="flex text-lg font-normal">
+            <div className="flex text-lg font-normal flex-col items-center sm:flex-row">
               <span className="flex items-center gap-1 mr-2">
                 {addSpaceEveryCharacter(selectedItem.price)}
                 <Image

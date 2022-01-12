@@ -8,8 +8,6 @@ const PurchaseList = () => {
 
   if (!purchases) return <></>
 
-  console.log(purchases)
-
   return (
     <div className="flex flex-col gap-4">
       <h2 className="text-3xl font-bold">Ostatnio kupione</h2>
