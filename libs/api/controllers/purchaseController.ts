@@ -48,7 +48,7 @@ export const handlePurchase = async ({
       }
     }
 
-    const response = await faunaClient.query(
+    const response: values.Document<Purchase> = await faunaClient.query(
       q.Create(q.Collection('purchases'), {
         data: { userId: id, item: shopItem.data },
       })
@@ -57,9 +57,41 @@ export const handlePurchase = async ({
     if (!response)
       return { status: '404', error: 'Could not purchase the item' }
 
-    logPurchase(id, shopItem.data)
+    logPurchase(response.ref.id, id, shopItem.data)
 
     return { status: '200', data: response }
+  } catch (error) {
+    return { status: '400', error }
+  }
+}
+
+export const getPurchaseByRef = async (id: string) => {
+  try {
+    const response: values.Document<Purchase> = await faunaClient.query(
+      q.Get(
+        q.Ref(q.Collection('purchases')),
+        q.Lambda(
+          'ref',
+          q.Let(
+            { doc: q.Get(q.Var('ref')) },
+            {
+              ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
+              ts: q.Select(['ts'], q.Var('doc')),
+              data: {
+                userId: q.Select(['data', 'userId'], q.Var('doc')),
+                item: q.Select(['data', 'item'], q.Var('doc')),
+              },
+            }
+          )
+        )
+      )
+    )
+
+    if (!response) return { status: '404', error: 'No purchase found' }
+
+    const { data } = response
+
+    return { status: '200', data }
   } catch (error) {
     return { status: '400', error }
   }
