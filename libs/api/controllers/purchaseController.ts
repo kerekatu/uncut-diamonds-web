@@ -69,7 +69,7 @@ export const getPurchaseByRef = async (id: string) => {
   try {
     const response: values.Document<Purchase> = await faunaClient.query(
       q.Get(
-        q.Ref(q.Collection('purchases')),
+        q.Ref(q.Collection('purchases'), id),
         q.Lambda(
           'ref',
           q.Let(
