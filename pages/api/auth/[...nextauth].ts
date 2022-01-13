@@ -2,7 +2,7 @@ import NextAuth, { Account } from 'next-auth'
 import DiscordProvider from 'next-auth/providers/discord'
 import { faunaClient } from '@/libs/fauna'
 import { FaunaAdapter } from '@next-auth/fauna-adapter'
-import { parseJSON, query as q } from 'faunadb'
+import { query as q } from 'faunadb'
 
 export default NextAuth({
   adapter: FaunaAdapter(faunaClient),

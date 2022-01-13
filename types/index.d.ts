@@ -24,12 +24,17 @@ export interface UserResponseError {
   url: string
 }
 
-export interface User {
+export interface UserBalance {
   rank: string
   user_id: string
   cash: number
   bank: number
   total: number
+}
+
+export interface User extends UserBalance {
+  username: string
+  avatar: string
 }
 
 export interface ShopItem {
@@ -39,6 +44,11 @@ export interface ShopItem {
   stock: string
   duration?: number
   image?: string
+  author?: {
+    id: string
+    name: string
+    image: string
+  }
 }
 
 export interface Purchase {

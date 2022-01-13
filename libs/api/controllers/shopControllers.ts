@@ -55,11 +55,12 @@ export const createShopItem = async ({
   stock,
   duration,
   image,
+  author,
 }: ShopItem) => {
   try {
     const response: values.Document<ShopItem> = await faunaClient.query(
       q.Create(q.Collection('shop'), {
-        data: { title, description, price, stock, duration, image },
+        data: { title, description, price, stock, duration, author, image },
       })
     )
 

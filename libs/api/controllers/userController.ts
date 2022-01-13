@@ -1,6 +1,6 @@
 import { faunaClient } from '@/libs/fauna'
 import { query as q } from 'faunadb'
-import { User } from 'types'
+import { User, UserBalance } from 'types'
 
 export const getUsers = async () => {
   try {
@@ -24,7 +24,24 @@ export const getUsers = async () => {
 
 export const getUserById = async (id: string) => {
   try {
-    const response = await fetch(
+    const userInfo: { data: { username: string; avatar: string }[] } =
+      await faunaClient.query(
+        q.Map(
+          q.Paginate(q.Ref(q.Collection('users'), id)),
+          q.Lambda(
+            'userRef',
+            q.Let(
+              { doc: q.Get(q.Var('userRef')) },
+              {
+                name: q.Select(['data', 'name'], q.Var('doc')),
+                image: q.Select(['data', 'image'], q.Var('doc')),
+              }
+            )
+          )
+        )
+      )
+
+    const userBalance = await fetch(
       `https://unbelievaboat.com/api/v1/guilds/${process.env.DISCORD_SERVER_ID}/users/${id}`,
       {
         headers: {
@@ -32,9 +49,12 @@ export const getUserById = async (id: string) => {
         },
       }
     )
-    const user: User = await response.json()
+    const responseUserBalance: UserBalance = await userBalance.json()
 
-    if (!user) return { status: '404', error: 'No user found' }
+    if (!responseUserBalance || !userInfo)
+      return { status: '404', error: 'No user found' }
+
+    const user: User = { ...responseUserBalance, ...userInfo.data[0] }
 
     return { status: '200', data: user }
   } catch (error) {

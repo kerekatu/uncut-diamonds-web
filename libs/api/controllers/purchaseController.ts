@@ -1,6 +1,6 @@
 import { patchUserOnPurchase } from '@/libs/api/controllers/userController'
 import { faunaClient } from '@/libs/fauna'
-import { query as q, Select, values } from 'faunadb'
+import { query as q, values } from 'faunadb'
 import {
   getShopItemByRef,
   updateShopItem,
@@ -68,12 +68,12 @@ export const handlePurchase = async ({
 export const getPurchaseByRef = async (id: string) => {
   try {
     const response: values.Document<Purchase> = await faunaClient.query(
-      q.Get(
-        q.Ref(q.Collection('purchases'), id),
+      q.Map(
+        q.Paginate(q.Ref(q.Collection('users'), id)),
         q.Lambda(
-          'ref',
+          'purchaseRef',
           q.Let(
-            { doc: q.Get(q.Var('ref')) },
+            { doc: q.Get(q.Var('purchaseRef')) },
             {
               ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
               ts: q.Select(['ts'], q.Var('doc')),

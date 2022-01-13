@@ -12,6 +12,7 @@ import { NextPage } from 'next'
 import { ApiResponse, FaunaResponse, ShopItem, User } from 'types'
 import Loader from '@/components/Loader'
 import { AnimatePresence, motion } from 'framer-motion'
+import { UserIcon } from '@heroicons/react/solid'
 
 const Modal = dynamic(() => import('@/components/Modal'))
 
@@ -103,11 +104,25 @@ const Shop: NextPage = () => {
                     }
                   >
                     <div className="flex flex-col h-full">
-                      {item.data?.duration && (
-                        <span className="self-start border border-zinc-800 px-3 py-1 rounded-md font-normal text-base">
-                          {formatHoursToDays(item.data.duration)}
-                        </span>
-                      )}
+                      <div className="flex gap-2">
+                        {item.data?.author && (
+                          <span className="flex items-center self-start border border-zinc-800 px-3 py-1 rounded-md font-normal text-base gap-2">
+                            <Image
+                              src={item.data.author.image}
+                              alt="User Avatar"
+                              width={21}
+                              height={21}
+                              className="rounded-full"
+                            />
+                            {item.data.author.name}
+                          </span>
+                        )}
+                        {item.data?.duration && (
+                          <span className="self-start border border-zinc-800 px-3 py-1 rounded-md font-normal text-base">
+                            {formatHoursToDays(item.data.duration)}
+                          </span>
+                        )}
+                      </div>
                       <h3 className="flex items-center mt-2 gap-x-2 gap-y-2 text-2xl font-bold leading-7">
                         {item.data.title}
                       </h3>
