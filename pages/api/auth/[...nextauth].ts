@@ -1,8 +1,9 @@
-import NextAuth, { Account } from 'next-auth'
+import NextAuth from 'next-auth'
 import DiscordProvider from 'next-auth/providers/discord'
 import { faunaClient } from '@/libs/fauna'
 import { FaunaAdapter } from '@next-auth/fauna-adapter'
 import { query as q } from 'faunadb'
+import { UserDiscord } from 'types'
 
 export default NextAuth({
   adapter: FaunaAdapter(faunaClient),
@@ -16,18 +17,46 @@ export default NextAuth({
   secret: process.env.AUTH_SECRET,
   session: { strategy: 'jwt' },
   callbacks: {
-    session: async ({ token, session }) => {
-      if (token.sub && token.picture) {
-        const userDiscordId: { ref: string; ts: number; data: Account } =
-          await faunaClient.query(
-            q.Get(q.Match(q.Index('account_by_id'), token.sub))
-          )
+    jwt: async ({ token, profile, account }) => {
+      if (profile) {
+        token = {
+          ...token,
+          id: profile?.id,
+          access_token: account?.access_token,
+        }
+      }
 
-        session.user.ref = token.sub
-        session.user.image = token.picture
-        session.user.id = userDiscordId?.data
-          ? userDiscordId.data.providerAccountId
-          : ''
+      return token
+    },
+    session: async ({ token, session }) => {
+      const discordImageResponse = await fetch(
+        `https://discord.com/api/users/@me`,
+        {
+          headers: {
+            Authorization: 'Bearer ' + token.access_token,
+          },
+        }
+      )
+      const discordImage: UserDiscord = await discordImageResponse.json()
+
+      if (token && token?.id) {
+        const image = discordImage?.avatar
+          ? `https://cdn.discordapp.com/avatars/${token.id}/${discordImage.avatar}`
+          : 'https://cdn.discordapp.com/embed/avatars/0.png'
+
+        await faunaClient.query(
+          q.Update(q.Ref(q.Collection('users'), token?.sub), {
+            data: {
+              name: token.name,
+              image,
+              id: token.id,
+            },
+          })
+        )
+
+        session.user.ref = token.sub ?? ''
+        session.user.image = image
+        session.user.id = token.id as string
       }
 
       return session

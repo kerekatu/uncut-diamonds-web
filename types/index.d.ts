@@ -24,6 +24,15 @@ export interface UserResponseError {
   url: string
 }
 
+export interface UserDiscord {
+  id: string
+  username: string
+  avatar: string
+  discriminator: string
+  email: string
+  [key: string]: unknown
+}
+
 export interface UserBalance {
   rank: string
   user_id: string
@@ -33,8 +42,9 @@ export interface UserBalance {
 }
 
 export interface User extends UserBalance {
-  username: string
-  avatar: string
+  name: string
+  image: string
+  id?: string
 }
 
 export interface ShopItem {

@@ -57,7 +57,7 @@ export const handlePurchase = async ({
     if (!response)
       return { status: '404', error: 'Could not purchase the item' }
 
-    logPurchase(response.ref.id, id, shopItem.data)
+    await logPurchase(response.ref.id, id, shopItem.data)
 
     return { status: '200', data: response }
   } catch (error) {
@@ -68,21 +68,17 @@ export const handlePurchase = async ({
 export const getPurchaseByRef = async (id: string) => {
   try {
     const response: values.Document<Purchase> = await faunaClient.query(
-      q.Map(
-        q.Paginate(q.Ref(q.Collection('users'), id)),
-        q.Lambda(
-          'purchaseRef',
-          q.Let(
-            { doc: q.Get(q.Var('purchaseRef')) },
-            {
-              ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
-              ts: q.Select(['ts'], q.Var('doc')),
-              data: {
-                userId: q.Select(['data', 'userId'], q.Var('doc')),
-                item: q.Select(['data', 'item'], q.Var('doc')),
-              },
-            }
-          )
+      await faunaClient.query(
+        q.Let(
+          { doc: q.Get(q.Var('purchaseRef'), id) },
+          {
+            ref: { id: q.Select(['ref', 'id'], q.Var('doc')) },
+            ts: q.Select(['ts'], q.Var('doc')),
+            data: {
+              userId: q.Select(['data', 'userId'], q.Var('doc')),
+              item: q.Select(['data', 'item'], q.Var('doc')),
+            },
+          }
         )
       )
     )

@@ -12,7 +12,6 @@ import { NextPage } from 'next'
 import { ApiResponse, FaunaResponse, ShopItem, User } from 'types'
 import Loader from '@/components/Loader'
 import { AnimatePresence, motion } from 'framer-motion'
-import { UserIcon } from '@heroicons/react/solid'
 
 const Modal = dynamic(() => import('@/components/Modal'))
 
@@ -32,10 +31,10 @@ const Shop: NextPage = () => {
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null)
   const { modalOpen, handleToggle, handleCancel } = useModal()
 
-  if (!user?.data || !shop || !Array.isArray(shop?.data)) return <Loader />
+  if (!user || !shop || !Array.isArray(shop?.data)) return <Loader />
 
   const isAffordable = (item: ShopItem): boolean => {
-    return item && item.price <= user.data.bank
+    return item && item.price <= user?.data?.bank
   }
 
   const handleAccept = async () => {

@@ -24,22 +24,15 @@ export const getUsers = async () => {
 
 export const getUserById = async (id: string) => {
   try {
-    const userInfo: { data: { username: string; avatar: string }[] } =
-      await faunaClient.query(
-        q.Map(
-          q.Paginate(q.Ref(q.Collection('users'), id)),
-          q.Lambda(
-            'userRef',
-            q.Let(
-              { doc: q.Get(q.Var('userRef')) },
-              {
-                name: q.Select(['data', 'name'], q.Var('doc')),
-                image: q.Select(['data', 'image'], q.Var('doc')),
-              }
-            )
-          )
-        )
+    const userInfo: { name: string; image: string } = await faunaClient.query(
+      q.Let(
+        { doc: q.Get(q.Match(q.Index('user_by_id'), id)) },
+        {
+          name: q.Select(['data', 'name'], q.Var('doc')),
+          image: q.Select(['data', 'image'], q.Var('doc')),
+        }
       )
+    )
 
     const userBalance = await fetch(
       `https://unbelievaboat.com/api/v1/guilds/${process.env.DISCORD_SERVER_ID}/users/${id}`,
@@ -54,7 +47,7 @@ export const getUserById = async (id: string) => {
     if (!responseUserBalance || !userInfo)
       return { status: '404', error: 'No user found' }
 
-    const user: User = { ...responseUserBalance, ...userInfo.data[0] }
+    const user: User = { ...responseUserBalance, ...userInfo }
 
     return { status: '200', data: user }
   } catch (error) {
