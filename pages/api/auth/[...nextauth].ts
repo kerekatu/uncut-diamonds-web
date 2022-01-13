@@ -4,6 +4,7 @@ import { faunaClient } from '@/libs/fauna'
 import { FaunaAdapter } from '@next-auth/fauna-adapter'
 import { query as q } from 'faunadb'
 import { UserDiscord } from 'types'
+import { signOut } from 'next-auth/react'
 
 export default NextAuth({
   adapter: FaunaAdapter(faunaClient),
@@ -29,17 +30,17 @@ export default NextAuth({
       return token
     },
     session: async ({ token, session }) => {
-      const discordImageResponse = await fetch(
-        `https://discord.com/api/users/@me`,
-        {
-          headers: {
-            Authorization: 'Bearer ' + token.access_token,
-          },
-        }
-      )
-      const discordImage: UserDiscord = await discordImageResponse.json()
-
       if (token && token?.id) {
+        const discordImageResponse = await fetch(
+          `https://discord.com/api/users/@me`,
+          {
+            headers: {
+              Authorization: 'Bearer ' + token.access_token,
+            },
+          }
+        )
+        const discordImage: UserDiscord = await discordImageResponse.json()
+
         const image = discordImage?.avatar
           ? `https://cdn.discordapp.com/avatars/${token.id}/${discordImage.avatar}`
           : 'https://cdn.discordapp.com/embed/avatars/0.png'
@@ -57,6 +58,8 @@ export default NextAuth({
         session.user.ref = token.sub ?? ''
         session.user.image = image
         session.user.id = token.id as string
+      } else {
+        signOut()
       }
 
       return session
