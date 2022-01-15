@@ -21,8 +21,10 @@ export default async function logPurchase(
       .setTitle(`Rachunek`)
       .addField(
         'Przedmiot',
-        `Nazwa: ${item.title}\n${
-          item?.duration && `Wygaśnie za: ${formatHoursToDays(item.duration)}`
+        `Nazwa: ${item.title}${
+          item?.duration
+            ? `\nWygaśnie za: ${formatHoursToDays(item.duration)}`
+            : ''
         }\nCena: ${addSpaceEveryCharacter(
           item.price
         )} <:uddiament:922146732060594207>\n\n`
@@ -30,7 +32,7 @@ export default async function logPurchase(
       .addField(
         'Zamówienie',
         `Numer zamówienia: ${purchaseId}\n${
-          item.author && `Wykonawca: <@${item.author?.id}>\n`
+          item.author ? `Wykonawca: <@${item.author?.id}>\n` : ''
         }Kupujący: <@${id}>`
       )
       .setThumbnail('https://cdn-icons-png.flaticon.com/512/314/314470.png')
@@ -38,7 +40,7 @@ export default async function logPurchase(
 
     await webhookClient.send(
       `Dziękujemy za zakupy w sklepie, <@${id}>! <a:pepeclap2:914171930012180491> ${
-        item.author && `<@${item.author?.id}>`
+        item.author ? `<@${item.author?.id}>` : ''
       }`,
       embed
     )
