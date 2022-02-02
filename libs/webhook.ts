@@ -1,5 +1,5 @@
 const schedule = require('node-schedule')
-import { Intents, MessageEmbed, WebhookClient } from 'discord.js'
+import { MessageEmbed, WebhookClient } from 'discord.js'
 import { ShopItem } from 'types'
 import { addSpaceEveryCharacter, formatHoursToDays } from '@/libs/helpers'
 
@@ -32,7 +32,11 @@ export default async function logPurchase(
       .addField(
         'Zamówienie',
         `Numer zamówienia: ${purchaseId}\n${
-          item.author ? `Wykonawca: <@${item.author?.id}>\n` : ''
+          item.author
+            ? `Wykonawca: <@${item.author?.id}>\nMarża: ${
+                (item.price / 100) * 10
+              } (10%)\n`
+            : ''
         }Kupujący: <@${id}>`
       )
       .setThumbnail('https://cdn-icons-png.flaticon.com/512/314/314470.png')
