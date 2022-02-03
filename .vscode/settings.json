@@ -1,8 +1,0 @@
-{
-  "files.exclude": {
-    "node_modules": true,
-    "yarn.lock": true,
-    ".vscode": true,
-    ".next": true
-  }
-}
