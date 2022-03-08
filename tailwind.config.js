@@ -15,6 +15,7 @@ module.exports = {
       animation: {
         tilt: 'tilt 5s infinite linear',
         zoom: 'zoom 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+        float: 'float 8s ease infinite',
       },
       keyframes: {
         tilt: {
@@ -37,6 +38,17 @@ module.exports = {
           },
           '100%': {
             transform: 'scale(1)',
+          },
+        },
+        float: {
+          '0%': {
+            transform: 'translateY(0)',
+          },
+          '50%': {
+            transform: 'translateY(-10px)',
+          },
+          '100%': {
+            transform: 'translateY(0)',
           },
         },
       },
