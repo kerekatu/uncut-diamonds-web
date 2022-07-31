@@ -1,21 +1,21 @@
-import { addSpaceEveryCharacter } from '@/libs/helpers'
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/solid'
-import { signOut } from 'next-auth/react'
-import Image from 'next/image'
-import { useRef, useState } from 'react'
+import { addSpaceEveryCharacter } from "@/libs/helpers";
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/solid";
+import { signOut } from "next-auth/react";
+import Image from "next/image";
+import { useRef, useState } from "react";
 
-import type { Session } from 'next-auth'
-import type { User } from 'types'
-import useOnClickOutside from '@/hooks/useOnClickOutside'
-import Button from '@/components/ui/Button'
+import Button from "@/components/ui/Button";
+import useOnClickOutside from "@/hooks/useOnClickOutside";
+import type { Session } from "next-auth";
+import type { User } from "types";
 
 const UserNav = ({ user, session }: { user: User; session: Session }) => {
-  const dropdownRef = useRef<HTMLLIElement>(null)
-  const [showNav, setShowNav] = useState<boolean>(false)
+  const dropdownRef = useRef<HTMLLIElement>(null);
+  const [showNav, setShowNav] = useState<boolean>(false);
 
   useOnClickOutside(dropdownRef, () => {
-    setShowNav(false)
-  })
+    setShowNav(false);
+  });
 
   return (
     <>
@@ -99,7 +99,7 @@ const UserNav = ({ user, session }: { user: User; session: Session }) => {
         )}
       </li>
     </>
-  )
-}
+  );
+};
 
-export default UserNav
+export default UserNav;

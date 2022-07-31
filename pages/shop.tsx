@@ -1,71 +1,71 @@
-import Layout from '@/components/Layout'
-import { useModal } from '@/hooks/useModal'
-import { addSpaceEveryCharacter, formatHoursToDays } from '@/libs/helpers'
-import { signIn, useSession } from 'next-auth/react'
-import Image from 'next/image'
-import { useState } from 'react'
-import toast, { Toaster } from 'react-hot-toast'
-import useSWR from 'swr'
-import dynamic from 'next/dynamic'
-import PurchaseList from '@/components/PurchaseList'
-import { NextPage } from 'next'
-import { ApiResponse, FaunaResponse, ShopItem, User } from 'types'
-import Loader from '@/components/Loader'
-import { AnimatePresence, motion } from 'framer-motion'
+import Layout from "@/components/Layout";
+import Loader from "@/components/Loader";
+import PurchaseList from "@/components/PurchaseList";
+import { useModal } from "@/hooks/useModal";
+import { addSpaceEveryCharacter, formatHoursToDays } from "@/libs/helpers";
+import { AnimatePresence, motion } from "framer-motion";
+import { NextPage } from "next";
+import { signIn, useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import useSWR from "swr";
+import { ApiResponse, FaunaResponse, ShopItem, User } from "types";
 
-const Modal = dynamic(() => import('@/components/Modal'))
+const Modal = dynamic(() => import("@/components/Modal"));
 
 interface SelectedItem {
-  id: string
-  title: string
-  price: number
-  stock?: string
+  id: string;
+  title: string;
+  price: number;
+  stock?: string;
 }
 
 const Shop: NextPage = () => {
-  const { data: session } = useSession()
-  const { data: shop } = useSWR<FaunaResponse<ShopItem>>('/api/shop')
+  const { data: session } = useSession();
+  const { data: shop } = useSWR<FaunaResponse<ShopItem>>("/api/shop");
   const { data: user } = useSWR<ApiResponse<User>>(
     `/api/users/${session?.user.id}`
-  )
-  const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null)
-  const { modalOpen, handleToggle, handleCancel } = useModal()
+  );
+  const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
+  const { modalOpen, handleToggle, handleCancel } = useModal();
 
-  if (!user || !shop || !Array.isArray(shop?.data)) return <Loader />
+  if (!user || !shop || !Array.isArray(shop?.data)) return <Loader />;
 
   const isAffordable = (item: ShopItem): boolean => {
-    return item && item.price <= user?.data?.bank
-  }
+    return item && item.price <= user?.data?.bank;
+  };
 
   const handleAccept = async () => {
-    const purchase = await fetch('/api/shop', {
-      method: 'PATCH',
-      headers: { 'Content-type': 'application/json' },
+    const purchase = await fetch("/api/shop", {
+      method: "PATCH",
+      headers: { "Content-type": "application/json" },
       body: JSON.stringify({
         id: session?.user.id,
         item: selectedItem?.id,
         ref: session?.user.ref,
       }),
-    })
-    const response = await purchase.json()
+    });
+    const response = await purchase.json();
 
-    if (response.status === '200') {
-      toast.success(`Przedmiot "${selectedItem?.title}" został kupiony`)
-      handleCancel()
-      setSelectedItem(null)
+    if (response.status === "200") {
+      toast.success(`Przedmiot "${selectedItem?.title}" został kupiony`);
+      handleCancel();
+      setSelectedItem(null);
     } else {
-      toast.error(`Coś poszło nie tak. Spróbuj ponownie`)
-      handleCancel()
-      setSelectedItem(null)
+      toast.error(`Coś poszło nie tak. Spróbuj ponownie`);
+      handleCancel();
+      setSelectedItem(null);
     }
-  }
+  };
 
   return (
     <>
-      <Layout customMeta={{ title: 'Sklep' }}>
+      <Layout customMeta={{ title: "Sklep" }}>
         <section
           className={`flex flex-col gap-16 ${
-            selectedItem || !session ? 'mb-16' : ''
+            selectedItem || !session ? "mb-16" : ""
           }`}
         >
           <motion.ul
@@ -76,19 +76,19 @@ const Shop: NextPage = () => {
           >
             {shop.data.length > 1 ? (
               shop.data
-                .filter((item) => item.data.stock !== '0')
+                .filter((item) => item.data.stock !== "0")
                 .sort((a, b) => a.data.price - b.data.price)
                 .map((item) => (
                   <li
                     className={`border-2 border-zinc-900 shadow-xl bg-zinc-900 rounded-xl px-8 py-4 cursor-pointer transition-all ${
                       isAffordable(item.data) &&
                       (selectedItem?.id === item.ref.id
-                        ? 'border-2 !border-green-600 drop-shadow-xl'
-                        : 'hover:border-green-600 hover:border-opacity-50 hover:drop-shadow-xl')
+                        ? "border-2 !border-green-600 drop-shadow-xl"
+                        : "hover:border-green-600 hover:border-opacity-50 hover:drop-shadow-xl")
                     } ${
                       !isAffordable(item.data)
-                        ? 'opacity-50 cursor-default'
-                        : ''
+                        ? "opacity-50 cursor-default"
+                        : ""
                     }`}
                     key={item.ref.id}
                     onClick={() =>
@@ -131,9 +131,9 @@ const Shop: NextPage = () => {
                       </span>
                       <div className="flex justify-between items-center mt-6 w-full">
                         <span>
-                          Ilość:{' '}
-                          {item.data.stock === 'Infinite'
-                            ? '∞'
+                          Ilość:{" "}
+                          {item.data.stock === "Infinite"
+                            ? "∞"
                             : item.data.stock}
                         </span>
                         <span className="flex items-center gap-1">
@@ -158,10 +158,10 @@ const Shop: NextPage = () => {
             <div className="fixed bottom-0 inset-x-0 bg-zinc-900 w-full px-10 p-6 flex items-center justify-center  font-bold gap-2 h-24 z-10 text-lg md:text-2xl">
               <button
                 className="text-green-500 underline transition-colors hover:text-green-600"
-                onClick={() => signIn('discord')}
+                onClick={() => signIn("discord")}
               >
                 Zaloguj się
-              </button>{' '}
+              </button>{" "}
               by skorzystać ze sklepu
             </div>
           ) : (
@@ -176,15 +176,15 @@ const Shop: NextPage = () => {
                   <div className="flex w-full items-center justify-center md:justify-between">
                     <div className="hidden md:flex md:flex-col">
                       <span className="flex items-center gap-1">
-                        <strong>Do zapłaty:</strong>{' '}
-                        {addSpaceEveryCharacter(selectedItem.price)}{' '}
+                        <strong>Do zapłaty:</strong>{" "}
+                        {addSpaceEveryCharacter(selectedItem.price)}{" "}
                         <Image
                           src="/static/diament.png"
                           alt="Uncut Diamonds Currency Symbol"
                           width={16}
                           height={16}
                           quality={100}
-                        />{' '}
+                        />{" "}
                         ({user.data.bank - selectedItem.price})
                       </span>
                       <span className="flex gap-1">
@@ -195,8 +195,8 @@ const Shop: NextPage = () => {
                     <button
                       className={`bg-green-600 px-24 py-2 rounded-xl text-white font-bold text-xl transition-all ${
                         selectedItem
-                          ? 'opacity-100 cursor-pointer hover:bg-green-500'
-                          : 'opacity-50 cursor-not-allowed'
+                          ? "opacity-100 cursor-pointer hover:bg-green-500"
+                          : "opacity-50 cursor-not-allowed"
                       }`}
                       onClick={handleToggle}
                     >
@@ -214,8 +214,8 @@ const Shop: NextPage = () => {
 
       {modalOpen && selectedItem ? (
         <Modal
-          acceptButton={{ title: 'Akceptuj', handleAccept }}
-          cancelButton={{ title: 'Anuluj', handleCancel }}
+          acceptButton={{ title: "Akceptuj", handleAccept }}
+          cancelButton={{ title: "Anuluj", handleCancel }}
           modalOpen={modalOpen}
         >
           <div className="flex flex-col items-center gap-2 text-center">
@@ -237,7 +237,7 @@ const Shop: NextPage = () => {
         </Modal>
       ) : null}
     </>
-  )
-}
+  );
+};
 
-export default Shop
+export default Shop;

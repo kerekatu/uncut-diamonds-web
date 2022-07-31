@@ -14,9 +14,9 @@ const Footer = () => {
           </a>
         </li>
         <li>
-          Wykonanie{' '}
+          Wykonanie{" "}
           <a
-            href="https://github.com/kerekatu"
+            href="https://konradrosa.com"
             target="_blank"
             rel="noreferrer"
             className="font-bold transition underline hover:text-zinc-400"
@@ -26,7 +26,7 @@ const Footer = () => {
         </li>
       </ul>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
