@@ -1,16 +1,19 @@
-import Comments from "@/components/Home/Comments";
-import Tags from "@/components/Home/Tags";
-import Layout from "@/components/Layout";
-import Button, { BUTTON_STYLES, MagicButton } from "@/components/ui/Button";
-import { differenceInDays } from "date-fns";
-import { motion } from "framer-motion";
-import { NextPage } from "next";
-import Image from "next/image";
-import Link from "next/link";
+import Comments from '@/components/Home/Comments'
+import Tags from '@/components/Home/Tags'
+import Layout from '@/components/Layout'
+import Button, { BUTTON_STYLES, MagicButton } from '@/components/ui/Button'
+import useCountdown from '@/hooks/useCountdown'
+import { differenceInDays } from 'date-fns'
+import { motion } from 'framer-motion'
+import { NextPage } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
 
 const Home: NextPage = () => {
+  const timeLeft = useCountdown(new Date(2023, 2, 30))
+
   return (
-    <Layout showHeader={false} customMeta={{ title: "Strona Główna" }}>
+    <Layout showHeader={false} customMeta={{ title: 'Strona Główna' }}>
       <section className="flex flex-col w-full items-center justify-center gap-2 relative overflow-hidden">
         <Comments />
         <motion.div
@@ -37,7 +40,7 @@ const Home: NextPage = () => {
           <h3 className="hidden mb-6 text-xl sm:block md:w-[600px]">
             Dołącz do naszej długowiecznej społeczności
             <b className="font-semibold">
-              {" "}
+              {' '}
               ({differenceInDays(new Date(), new Date(2021, 1, 1))} dni)
             </b>
             , otwartej na nowe znajomości. U nas zagrasz, pogadasz i weźmiesz
@@ -64,13 +67,14 @@ const Home: NextPage = () => {
               className="text-base bg-green-600 border-green-600 disabled:hover:bg-green-600 disabled:hover:border-green-600 disabled:hover:text-white"
               disabled
             >
-              Minecraft - wkrótce
+              Minecraft - {timeLeft.days} dni, {timeLeft.hours}:
+              {timeLeft.minutes}:{timeLeft.seconds}
             </Button>
           </div>
         </motion.div>
       </section>
     </Layout>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
