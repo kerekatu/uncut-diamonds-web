@@ -66,6 +66,7 @@ const Home: NextPage = () => {
               variant="ctaSecondary"
               className="text-base bg-green-600 border-green-600 disabled:hover:bg-green-600 disabled:hover:border-green-600 disabled:hover:text-white"
               disabled
+              title="Niespełnienie obietnic czasowych wiąże się z banem dla użytkownika vitae"
             >
               Minecraft - {timeLeft.days} dni, {timeLeft.hours}:
               {timeLeft.minutes}:{timeLeft.seconds}
