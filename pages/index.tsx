@@ -61,7 +61,7 @@ const Home: NextPage = () => {
             </Link>
           </div>
 
-          <div className="pt-6">
+{/*           <div className="pt-6">
             <Button
               variant="ctaSecondary"
               className="text-base bg-green-600 border-green-600 disabled:hover:bg-green-600 disabled:hover:border-green-600 disabled:hover:text-white"
@@ -71,7 +71,7 @@ const Home: NextPage = () => {
               Minecraft - {timeLeft.days} dni, {timeLeft.hours}:
               {timeLeft.minutes}:{timeLeft.seconds}
             </Button>
-          </div>
+          </div> */}
         </motion.div>
       </section>
     </Layout>
