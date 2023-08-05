@@ -29,6 +29,7 @@ const Shop: NextPage = () => {
     `/api/users/${session?.user.id}`
   );
   const [selectedItem, setSelectedItem] = useState<SelectedItem | null>(null);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false)
   const { modalOpen, handleToggle, handleCancel } = useModal();
 
   if (!user || !shop || !Array.isArray(shop?.data)) return <Loader />;
@@ -48,15 +49,18 @@ const Shop: NextPage = () => {
       }),
     });
     const response = await purchase.json();
+    setIsDisabled(true);
 
     if (response.status === "200") {
       toast.success(`Przedmiot "${selectedItem?.title}" został kupiony`);
       handleCancel();
       setSelectedItem(null);
+      setIsDisabled(false);
     } else {
       toast.error(`Coś poszło nie tak. Spróbuj ponownie`);
       handleCancel();
       setSelectedItem(null);
+      setIsDisabled(false);
     }
   };
 
@@ -214,7 +218,7 @@ const Shop: NextPage = () => {
 
       {modalOpen && selectedItem ? (
         <Modal
-          acceptButton={{ title: "Akceptuj", handleAccept }}
+          acceptButton={{ title: "Akceptuj", handleAccept: !isDisabled && handleAccept }}
           cancelButton={{ title: "Anuluj", handleCancel }}
           modalOpen={modalOpen}
         >

@@ -22,7 +22,7 @@ const Home: NextPage = () => {
           transition={{ duration: 1, delay: 0.3 }}
         >
           <Image
-            src="/static/logo.svg"
+            // src="/static/logo.svg"
             alt="Uncut Diamonds Logo"
             height={190}
             width={540}
